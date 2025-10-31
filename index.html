@@ -272,6 +272,84 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
+		
+		/* === Модальное окно === */
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1000;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.7);
+			justify-content: center;
+			align-items: center;
+		}
+
+		.modal-content {
+			background-color: var(--header-bg);
+			padding: 20px;
+			border-radius: 8px;
+			width: 90%;
+			max-width: 500px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+			position: relative;
+		}
+
+		.modal-content h3 {
+			margin-top: 0;
+			margin-bottom: 10px;
+		}
+
+		.modal-content p {
+			margin: 8px 0;
+			font-size: 14px;
+		}
+
+		.donate-links a {
+			color: #ffcc00;
+			text-decoration: underline;
+			display: block;
+			margin: 5px 0;
+		}
+
+		.donate-links a:hover {
+			color: #fff;
+		}
+
+		.modal-buttons {
+			display: flex;
+			gap: 10px;
+			margin-top: 20px;
+			justify-content: space-between;
+		}
+
+		.modal-buttons button {
+			padding: 8px 16px;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			transition: background-color 0.2s;
+		}
+
+		#cancelButton {
+			background-color: var(--button-bg);
+			color: white;
+		}
+
+		#cancelButton:hover {
+			background-color: var(--button-hover);
+		}
+
+		#copyButton {
+			background-color: var(--button-bg);
+			color: white;
+		}
+
+		#copyButton:hover {
+			background-color: var(--button-hover);
+		}
     </style>
 </head>
 <body>
@@ -332,261 +410,321 @@
         </div>
     </div>
 
-    <script>
-        // === Маппинги ===
-        const attrToIcon = {
-            "Английские": "uk.png",
-            "Французские": "fr.png",
-            "Итальянские": "it.png",
-            "Молдавские": "md.png",
-            "Украинские": "ua.png",
-            "Из кинофильмов": "film.png",
-            "Из мультфильмов": "mult.png",
-            "Лирические": "piano.png",
-            "Потанцевать": "dance.png",
-            "РОК": "rock.png",
-            "ПОП": "pop.png",
-            "Народные": "folk.png",
-            "Ретро": "retro.png"
-        };
+	<div id="requestModal" class="modal">
+		<div class="modal-content">
+			<h3>Song Request</h3>
+			<p>Заказ песни <strong><span id="modalArtistTitle">Artist – Title</span></strong> за поддержку от 200 рублей на</p>
+			<div class="donate-links">
+				<a href="https://www.donationalerts.com/r/vanilla_bun_" target="_blank">https://www.donationalerts.com/r/vanilla_bun_</a><br>
+				<a href="https://new.donatepay.ru/@vanillabun" target="_blank">https://new.donatepay.ru/@vanillabun</a><br>
+				поддержка на карту Ы-Банк: 0000 0000 0000 0000 (Имя Ф.)
+			</div>
+			<div class="modal-buttons">
+				<button id="cancelButton">Cancel</button>
+				<button id="copyButton">Копировать название</button>
+			</div>
+		</div>
+	</div>
 
-        const hiddenInTable = new Set([
-            "На других языках",
-            "Новогодние",
-            "A cappella",
-            "Колыбельные"
-        ]);
+	<script>
+		// === Маппинги ===
+		const attrToIcon = {
+			"Английские": "uk.png",
+			"Французские": "fr.png",
+			"Итальянские": "it.png",
+			"Молдавские": "md.png",
+			"Украинские": "ua.png",
+			"Из кинофильмов": "film.png",
+			"Из мультфильмов": "mult.png",
+			"Лирические": "piano.png",
+			"Потанцевать": "dance.png",
+			"РОК": "rock.png",
+			"ПОП": "pop.png",
+			"Народные": "folk.png",
+			"Ретро": "retro.png"
+		};
 
-        const attrPriority = [
-            "Английские", "Французские", "Итальянские", "Молдавские", "Украинские",
-            "Из кинофильмов",
-            "Из мультфильмов",
-            "Лирические",
-            "Потанцевать",
-            "РОК",
-            "ПОП",
-            "Народные",
-            "Ретро"
-        ];
+		const hiddenInTable = new Set([
+			"На других языках",
+			"Новогодние",
+			"A cappella",
+			"Колыбельные"
+		]);
 
-        const filterMap = {
-            'earth': ["Английские", "Французские", "Итальянские", "Молдавские", "Украинские"],
-            'film': ["Из кинофильмов"],
-            'mult': ["Из мультфильмов"],
-            'piano': ["Лирические"],
-            'dance': ["Потанцевать"],
-            'rock': ["РОК"],
-            'pop': ["ПОП"],
-            'folk': ["Народные"],
-            'retro': ["Ретро"]
-        };
+		const attrPriority = [
+			"Английские", "Французские", "Итальянские", "Молдавские", "Украинские",
+			"Из кинофильмов",
+			"Из мультфильмов",
+			"Лирические",
+			"Потанцевать",
+			"РОК",
+			"ПОП",
+			"Народные",
+			"Ретро"
+		];
 
-        const fallbackIcon = "unknown.png";
+		const filterMap = {
+			'earth': ["Английские", "Французские", "Итальянские", "Молдавские", "Украинские"],
+			'film': ["Из кинофильмов"],
+			'mult': ["Из мультфильмов"],
+			'piano': ["Лирические"],
+			'dance': ["Потанцевать"],
+			'rock': ["РОК"],
+			'pop': ["ПОП"],
+			'folk': ["Народные"],
+			'retro': ["Ретро"]
+		};
 
-        // === Глобальные переменные ===
-        let allSongs = [];
-        let filteredSongs = [];
-        let currentPage = 1;
-        let itemsPerPage = 10;
-        let sortColumn = null;
-        let sortDirection = 'asc';
-        let activeFilters = [];
+		const fallbackIcon = "unknown.png";
 
-        // === Рендеринг таблицы ===
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
+		// === Глобальные переменные ===
+		let allSongs = [];
+		let filteredSongs = [];
+		let currentPage = 1;
+		let itemsPerPage = 10;
+		let sortColumn = null;
+		let sortDirection = 'asc';
+		let activeFilters = [];
+		let currentSong = { artist: '', title: '' };
 
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = Math.min(startIndex + itemsPerPage, filteredSongs.length);
+		// === Рендеринг таблицы ===
+		function renderTable() {
+			const tbody = document.getElementById('tableBody');
+			tbody.innerHTML = '';
 
-            for (let i = startIndex; i < endIndex; i++) {
-                const row = filteredSongs[i];
-                const title = row.title || '';
-                const artist = row.artist || '';
-                const attrs = row.attributes ? row.attributes.split(',').map(s => s.trim()) : [];
+			const startIndex = (currentPage - 1) * itemsPerPage;
+			const endIndex = Math.min(startIndex + itemsPerPage, filteredSongs.length);
 
-                const visibleAttrs = attrs.filter(attr => !hiddenInTable.has(attr));
-                visibleAttrs.sort((a, b) => {
-                    const ia = attrPriority.indexOf(a);
-                    const ib = attrPriority.indexOf(b);
-                    if (ia === -1 && ib === -1) return 0;
-                    if (ia === -1) return 1;
-                    if (ib === -1) return -1;
-                    return ia - ib;
-                });
+			for (let i = startIndex; i < endIndex; i++) {
+				const row = filteredSongs[i];
+				const title = row.title || '';
+				const artist = row.artist || '';
+				const attrs = row.attributes ? row.attributes.split(',').map(s => s.trim()) : [];
 
-                let flagsHtml = '';
-                if (visibleAttrs.length > 0) {
-                    flagsHtml = '<div class="flags-container">';
-                    visibleAttrs.forEach(attr => {
-                        const iconName = attrToIcon[attr] || fallbackIcon;
-                        flagsHtml += `<img class="flag-icon" src="icons/${iconName}" alt="${attr}">`;
-                    });
-                    flagsHtml += '</div>';
-                }
+				const visibleAttrs = attrs.filter(attr => !hiddenInTable.has(attr));
+				visibleAttrs.sort((a, b) => {
+					const ia = attrPriority.indexOf(a);
+					const ib = attrPriority.indexOf(b);
+					if (ia === -1 && ib === -1) return 0;
+					if (ia === -1) return 1;
+					if (ib === -1) return -1;
+					return ia - ib;
+				});
 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${title}</td>
-                    <td>${artist}</td>
-                    <td>${flagsHtml}</td>
-                    <td><button class="request-button">Request</button></td>
-                `;
-                tbody.appendChild(tr);
-            }
+				let flagsHtml = '';
+				if (visibleAttrs.length > 0) {
+					flagsHtml = '<div class="flags-container">';
+					visibleAttrs.forEach(attr => {
+						const iconName = attrToIcon[attr] || fallbackIcon;
+						flagsHtml += `<img class="flag-icon" src="icons/${iconName}" alt="${attr}">`;
+					});
+					flagsHtml += '</div>';
+				}
 
-            const pageInfo = document.getElementById('pageInfo');
-            pageInfo.textContent = `${startIndex + 1} – ${endIndex} of ${filteredSongs.length}`;
+				const tr = document.createElement('tr');
+				const requestBtn = document.createElement('button');
+				requestBtn.className = 'request-button';
+				requestBtn.textContent = 'Request';
+				requestBtn.addEventListener('click', () => {
+					currentSong.artist = artist;
+					currentSong.title = title;
+					openRequestModal();
+				});
 
-            const totalPages = Math.ceil(filteredSongs.length / itemsPerPage);
-            document.getElementById('firstPage').disabled = currentPage === 1;
-            document.getElementById('prevPage').disabled = currentPage === 1;
-            document.getElementById('nextPage').disabled = currentPage >= totalPages;
-            document.getElementById('lastPage').disabled = currentPage >= totalPages;
+				tr.innerHTML = `
+					<td>${title}</td>
+					<td>${artist}</td>
+					<td>${flagsHtml}</td>
+					<td></td>
+				`;
+				tr.querySelector('td:last-child').appendChild(requestBtn);
+				tbody.appendChild(tr);
+			}
 
-            document.querySelectorAll('.request-button').forEach(btn => {
-                btn.addEventListener('click', () => alert('Запрос отправлен!'));
-            });
-        }
+			const pageInfo = document.getElementById('pageInfo');
+			pageInfo.textContent = `${startIndex + 1} – ${endIndex} of ${filteredSongs.length}`;
 
-        // === Фильтрация (поиск + фильтры) ===
-        function filterSongs() {
-            const term = document.getElementById('searchInput').value.toLowerCase().trim();
+			const totalPages = Math.ceil(filteredSongs.length / itemsPerPage);
+			document.getElementById('firstPage').disabled = currentPage === 1;
+			document.getElementById('prevPage').disabled = currentPage === 1;
+			document.getElementById('nextPage').disabled = currentPage >= totalPages;
+			document.getElementById('lastPage').disabled = currentPage >= totalPages;
+		}
 
-            filteredSongs = allSongs.filter(row => {
-                const title = row.title.toLowerCase();
-                const artist = row.artist.toLowerCase();
-                const matchesSearch = title.includes(term) || artist.includes(term);
-                if (!matchesSearch) return false;
+		// === Фильтрация (поиск + фильтры) ===
+		function filterSongs() {
+			const term = document.getElementById('searchInput').value.toLowerCase().trim();
 
-                const songAttrs = new Set(row.attributes ? row.attributes.split(',').map(s => s.trim()) : []);
+			filteredSongs = allSongs.filter(row => {
+				const title = row.title.toLowerCase();
+				const artist = row.artist.toLowerCase();
+				const matchesSearch = title.includes(term) || artist.includes(term);
+				if (!matchesSearch) return false;
 
-                for (const key of activeFilters) {
-                    const required = filterMap[key];
-                    if (!required.some(attr => songAttrs.has(attr))) {
-                        return false;
-                    }
-                }
-                return true;
-            });
+				const songAttrs = new Set(row.attributes ? row.attributes.split(',').map(s => s.trim()) : []);
 
-            currentPage = 1;
-            renderTable();
-        }
+				for (const key of activeFilters) {
+					const required = filterMap[key];
+					if (!required.some(attr => songAttrs.has(attr))) {
+						return false;
+					}
+				}
+				return true;
+			});
 
-        // === Сортировка ===
-        function sortTable(column) {
-            if (sortColumn === column) {
-                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                sortColumn = column;
-                sortDirection = 'asc';
-            }
+			currentPage = 1;
+			renderTable();
+		}
 
-            filteredSongs.sort((a, b) => {
-                const valA = a[column].toLowerCase();
-                const valB = b[column].toLowerCase();
-                return sortDirection === 'asc'
-                    ? valA.localeCompare(valB)
-                    : valB.localeCompare(valA);
-            });
+		// === Сортировка ===
+		function sortTable(column) {
+			if (sortColumn === column) {
+				sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+			} else {
+				sortColumn = column;
+				sortDirection = 'asc';
+			}
 
-            renderTable();
-        }
+			filteredSongs.sort((a, b) => {
+				const valA = a[column].toLowerCase();
+				const valB = b[column].toLowerCase();
+				return sortDirection === 'asc'
+					? valA.localeCompare(valB)
+					: valB.localeCompare(valA);
+			});
 
-        // === Загрузка CSV ===
-        function loadCSV() {
-            Papa.parse('song-export.csv', {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    allSongs = results.data.filter(row => row.active === 'true');
-                    localStorage.setItem('songsData', JSON.stringify(allSongs));
-                    localStorage.setItem('songsLastUpdate', new Date().toISOString());
-                    filterSongs();
-                },
-                error: function(err) {
-                    console.error('Ошибка загрузки CSV:', err);
-                    alert('Не удалось загрузить song-export.csv');
-                }
-            });
-        }
+			renderTable();
+		}
 
-        // === Инициализация ===
-        document.addEventListener('DOMContentLoaded', function() {
-            const cached = localStorage.getItem('songsData');
-            if (cached) {
-                allSongs = JSON.parse(cached);
-                filterSongs();
-            } else {
-                loadCSV();
-            }
+		// === Загрузка CSV ===
+		function loadCSV() {
+			Papa.parse('song-export.csv', {
+				download: true,
+				header: true,
+				skipEmptyLines: true,
+				complete: function(results) {
+					allSongs = results.data.filter(row => row.active === 'true');
+					localStorage.setItem('songsData', JSON.stringify(allSongs));
+					localStorage.setItem('songsLastUpdate', new Date().toISOString());
+					filterSongs();
+				},
+				error: function(err) {
+					console.error('Ошибка загрузки CSV:', err);
+					alert('Не удалось загрузить song-export.csv');
+				}
+			});
+		}
 
-            // Поиск
-            document.getElementById('searchInput').addEventListener('input', filterSongs);
-            document.getElementById('clearSearch').addEventListener('click', () => {
-                document.getElementById('searchInput').value = '';
-                filterSongs();
-            });
+		// === Модальное окно ===
+		function openRequestModal() {
+			const modal = document.getElementById('requestModal');
+			const artistTitleEl = document.getElementById('modalArtistTitle');
+			artistTitleEl.textContent = `${currentSong.artist} - ${currentSong.title}`;
+			modal.style.display = 'flex';
+		}
 
-            // Обновление
-            document.getElementById('refreshBtn').addEventListener('click', loadCSV);
+		function closeRequestModal() {
+			document.getElementById('requestModal').style.display = 'none';
+		}
 
-            // Пагинация
-            document.getElementById('itemsPerPage').addEventListener('change', (e) => {
-                itemsPerPage = parseInt(e.target.value);
-                currentPage = 1;
-                renderTable();
-            });
+		// === Инициализация ===
+		document.addEventListener('DOMContentLoaded', function() {
+			const cached = localStorage.getItem('songsData');
+			if (cached) {
+				allSongs = JSON.parse(cached);
+				filterSongs();
+			} else {
+				loadCSV();
+			}
 
-            document.getElementById('firstPage').addEventListener('click', () => {
-                currentPage = 1;
-                renderTable();
-            });
+			// Поиск
+			document.getElementById('searchInput').addEventListener('input', filterSongs);
+			document.getElementById('clearSearch').addEventListener('click', () => {
+				document.getElementById('searchInput').value = '';
+				filterSongs();
+			});
 
-            document.getElementById('prevPage').addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderTable();
-                }
-            });
+			// Обновление
+			document.getElementById('refreshBtn').addEventListener('click', loadCSV);
 
-            document.getElementById('nextPage').addEventListener('click', () => {
-                const totalPages = Math.ceil(filteredSongs.length / itemsPerPage);
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    renderTable();
-                }
-            });
+			// Пагинация
+			document.getElementById('itemsPerPage').addEventListener('change', (e) => {
+				itemsPerPage = parseInt(e.target.value);
+				currentPage = 1;
+				renderTable();
+			});
 
-            document.getElementById('lastPage').addEventListener('click', () => {
-                currentPage = Math.ceil(filteredSongs.length / itemsPerPage);
-                renderTable();
-            });
+			document.getElementById('firstPage').addEventListener('click', () => {
+				currentPage = 1;
+				renderTable();
+			});
 
-            // Сортировка
-            document.getElementById('sortTitle').addEventListener('click', () => sortTable('title'));
-            document.getElementById('sortArtist').addEventListener('click', () => sortTable('artist'));
+			document.getElementById('prevPage').addEventListener('click', () => {
+				if (currentPage > 1) {
+					currentPage--;
+					renderTable();
+				}
+			});
 
-            // Фильтры
-            const iconButtons = document.querySelectorAll('.icon-button[data-filter]');
-            iconButtons.forEach(btn => {
-                const key = btn.dataset.filter;
-                btn.addEventListener('click', () => {
-                    const index = activeFilters.indexOf(key);
-                    if (index === -1) {
-                        activeFilters.push(key);
-                        btn.style.backgroundColor = '#2D2D2D';
-                    } else {
-                        activeFilters.splice(index, 1);
-                        btn.style.backgroundColor = '';
-                    }
-                    filterSongs();
-                });
-            });
-        });
-    </script>
+			document.getElementById('nextPage').addEventListener('click', () => {
+				const totalPages = Math.ceil(filteredSongs.length / itemsPerPage);
+				if (currentPage < totalPages) {
+					currentPage++;
+					renderTable();
+				}
+			});
+
+			document.getElementById('lastPage').addEventListener('click', () => {
+				currentPage = Math.ceil(filteredSongs.length / itemsPerPage);
+				renderTable();
+			});
+
+			// Сортировка
+			document.getElementById('sortTitle').addEventListener('click', () => sortTable('title'));
+			document.getElementById('sortArtist').addEventListener('click', () => sortTable('artist'));
+
+			// Фильтры
+			const iconButtons = document.querySelectorAll('.icon-button[data-filter]');
+			iconButtons.forEach(btn => {
+				const key = btn.dataset.filter;
+				btn.addEventListener('click', () => {
+					const index = activeFilters.indexOf(key);
+					if (index === -1) {
+						activeFilters.push(key);
+						btn.style.backgroundColor = '#2D2D2D';
+					} else {
+						activeFilters.splice(index, 1);
+						btn.style.backgroundColor = '';
+					}
+					filterSongs();
+				});
+			});
+
+			// Модальное окно
+			document.getElementById('cancelButton').addEventListener('click', closeRequestModal);
+			document.getElementById('copyButton').addEventListener('click', () => {
+				const text = `${currentSong.artist} - ${currentSong.title}`;
+				navigator.clipboard.writeText(text).then(() => {
+					alert('Название скопировано!');
+				}).catch(err => {
+					console.error('Не удалось скопировать: ', err);
+				});
+			});
+
+			// Закрытие по клику вне окна
+			document.getElementById('requestModal').addEventListener('click', (e) => {
+				if (e.target === e.currentTarget) {
+					closeRequestModal();
+				}
+			});
+
+			// Закрытие по клавише Esc
+			document.addEventListener('keydown', (e) => {
+				if (e.key === 'Escape' && document.getElementById('requestModal').style.display === 'flex') {
+					closeRequestModal();
+				}
+			});
+		});
+	</script>
 </body>
 </html>
