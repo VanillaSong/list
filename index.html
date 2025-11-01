@@ -951,6 +951,22 @@
 
 			document.getElementById('sortTitle').addEventListener('click', () => sortTable('title'));
 			document.getElementById('sortArtist').addEventListener('click', () => sortTable('artist'));
+			
+			const iconButtons = document.querySelectorAll('.icon-button[data-filter]');
+			iconButtons.forEach(btn => {
+				const key = btn.dataset.filter;
+				btn.addEventListener('click', () => {
+					const index = activeFilters.indexOf(key);
+					if (index === -1) {
+						activeFilters.push(key);
+						btn.style.backgroundColor = '#2D2D2D'; // активный цвет
+					} else {
+						activeFilters.splice(index, 1);
+						btn.style.backgroundColor = ''; // сброс
+					}
+					filterSongs();
+				});
+			});
 		});
 	</script>
 
