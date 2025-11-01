@@ -331,18 +331,40 @@
 		}
 
 		.modal-content {
-			background-color: var(--header-bg); /* согласованность */
+			background-color: var(--header-bg);
 			margin: auto;
-			padding: 20px;
+			padding: 20px 51px;
 			border-radius: 12px;
 			width: 90%;
 			max-width: 400px;
 			color: #fff;
-			text-align: center;
+			text-align: left;
+			font-size: 14px;
 			box-shadow: 0 0 15px rgba(0,0,0,0.4);
 		}
+		
+		.modal-text {
+			margin-top: 0;
+			margin-bottom: 12px;
+			line-height: 1.4;
+		}
+		
+		.donate-links {
+			margin: 0;
+		}
+		
+		.donate-link {
+			display: block;
+			color: #B3DBF2;
+			text-decoration: underline;
+			margin-top: 12px;
+			line-height: 1.4;
+		}
+		
+		.donate-link:hover {
+			color: #fff;
+		}
 
-		/* Кнопки в модальном окне */
 		.modal-buttons {
 			display: flex;
 			gap: 10px;
@@ -364,32 +386,29 @@
 			background: var(--button-hover);
 		}
 
-		/* Стили для ссылок и текста пожертвований */
-		.donate-links {
-			margin: 12px 0;
-			font-size: 14px;
-			line-height: 1.4;
-			color: #ccc;
-		}
+		<!-- /* Стили для ссылок и текста пожертвований */ -->
+		<!-- .donate-links { -->
+			<!-- margin: 12px 0; -->
+			<!-- font-size: 14px; -->
+			<!-- line-height: 1.4; -->
+		<!-- } -->
 
-		.donate-links a {
-			color: #B3DBF2;
-			text-decoration: underline;
-			display: block;
-			margin: 4px 0;
-		}
+		<!-- .donate-links a { -->
+			<!-- color: #B3DBF2; -->
+			<!-- text-decoration: underline; -->
+			<!-- margin-bottom: 0 -->
+			<!-- display: block; -->
+		<!-- } -->
 
-		.donate-links a:hover {
-			color: #fff;
-		}
+		<!-- .donate-links a:hover { -->
+			<!-- color: #fff; -->
+		<!-- } -->
 
-		/* Текст с картой (не ссылка) */
+		/* Текст с картой */
 		.modal-donation {
-			margin-top: 18px;
+			margin-top: 12px;
 			font-size: 14px;
-			color: #ccc;
-			line-height: 1.4;
-			word-break: break-word;
+			line-height: 1.4;			
 			overflow-wrap: anywhere;
 		}
 
@@ -413,10 +432,43 @@
 		.toast.show {
 			opacity: 1;
 		}
-
-		#refreshBtn {
-		    display: none !important;
+		
+		#cancelButton,
+		#copyButton {
+			padding: 10px 16px;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			font-size: 12px;
+			min-width: 100px;
+			box-sizing: border-box;
+			text-align: center;
+			white-space: nowrap;
+			color: #fff;
+			background: linear-gradient(135deg, var(--button-bg) 0%, var(--button-hover) 100%);
+			box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 		}
+
+		#cancelButton:hover,
+		#copyButton:hover {
+			background: linear-gradient(135deg, var(--button-hover) 0%, var(--button-bg) 100%);
+			box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+			transform: translateY(-1px);
+		}
+
+		#cancelButton {
+			background: linear-gradient(135deg, #555 0%, #777 100%);
+		}
+
+		#cancelButton:hover {
+			background: linear-gradient(135deg, #777 0%, #555 100%);
+		}
+		
+		#refreshBtn {
+			display: none !important;
+		}
+
 
 		/* === Мобильная адаптация === */
 		@media (max-width: 768px) {
@@ -671,20 +723,22 @@
 		</div>
     </div>
 
-    <div id="requestModal" class="modal">
-        <div class="modal-content">
-            <p>Заказать песню "<span id="modalArtistTitle">Artist – Title</span>" за поддержку от 200 рублей, сигна в подарок от 500 рублей</p>
-            <div class="donate-links">
-                <a href="https://www.donationalerts.com/r/vanilla_bun_" target="_blank">https://www.donationalerts.com/r/vanilla_bun_</a>
-                <a href="https://new.donatepay.ru/@vanillabun" target="_blank">https://new.donatepay.ru/@vanillabun</a>
-                поддержка на карту Ы-Банк: 0000 0000 0000 0000 (Имя Ф.)
-            </div>
-            <div class="modal-buttons">
-                <button id="cancelButton">Cancel</button>
-                <button id="copyButton">Копировать название песни</button>
-            </div>
-        </div>
-    </div>
+	<div id="requestModal" class="modal">
+		<div class="modal-content">
+			<p class="modal-text">Заказать песню "<span id="modalArtistTitle">Artist – Title</span>" за поддержку от 200 рублей, сигна в подарок от 500 рублей</p>
+			<div class="donate-links">
+				<a href="https://www.donationalerts.com/r/vanilla_bun_" target="_blank" class="donate-link">https://www.donationalerts.com/r/vanilla_bun_</a>
+				<a href="https://new.donatepay.ru/@vanillabun" target="_blank" class="donate-link">https://new.donatepay.ru/@vanillabun</a>
+			</div>
+			<div class="modal-donation">
+				поддержка на карту Ы-Банк:<br>0000 0000 0000 0000 (Имя Ф.)
+			</div>
+			<div class="modal-buttons">
+				<button id="copyButton">Копировать название песни</button>
+				<button id="cancelButton">Cancel</button>
+			</div>
+		</div>
+	</div>
 	<div id="toast" class="toast">Скопировано</div>
 
 	<script>
