@@ -2,9 +2,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+	<meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Songlist Vanilla Bun</title>
+    <title>Vanilla Bun Songlist </title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
 	<style>
 		:root {
 			--bg-color: #2d2d2d;
@@ -22,7 +24,7 @@
 			margin: 0;
 			padding: 0;
 			box-sizing: border-box;
-			font-family: Arial, sans-serif;
+			font-family: 'Open Sans', sans-serif;
 		}
 
 		body {
@@ -91,8 +93,8 @@
 		}
 
 		.icon-button {
-			width: 30px;
-			height: 30px;
+			width: 38px;
+			height: 38px;
 			background-color: var(--button-bg);
 			border-radius: 5px;
 			display: flex;
@@ -108,8 +110,8 @@
 		}
 
 		.icon-button img {
-			width: 20px;
-			height: 20px;
+			width: 25px;
+			height: 25px;
 			object-fit: contain;
 		}
 
@@ -333,7 +335,7 @@
 		.modal-content {
 			background-color: var(--header-bg);
 			margin: auto;
-			padding: 20px 51px;
+			padding: 20px 40px;
 			border-radius: 12px;
 			width: 90%;
 			max-width: 400px;
@@ -386,24 +388,6 @@
 			background: var(--button-hover);
 		}
 
-		<!-- /* Стили для ссылок и текста пожертвований */ -->
-		<!-- .donate-links { -->
-			<!-- margin: 12px 0; -->
-			<!-- font-size: 14px; -->
-			<!-- line-height: 1.4; -->
-		<!-- } -->
-
-		<!-- .donate-links a { -->
-			<!-- color: #B3DBF2; -->
-			<!-- text-decoration: underline; -->
-			<!-- margin-bottom: 0 -->
-			<!-- display: block; -->
-		<!-- } -->
-
-		<!-- .donate-links a:hover { -->
-			<!-- color: #fff; -->
-		<!-- } -->
-
 		/* Текст с картой */
 		.modal-donation {
 			margin-top: 12px;
@@ -414,6 +398,7 @@
 
 		/* === Toast уведомление === */
 		.toast {
+			white-space: nowrap;
 			position: fixed;
 			bottom: 20px;
 			left: 50%;
@@ -468,10 +453,42 @@
 		#refreshBtn {
 			display: none !important;
 		}
+		
+		.card-field {
+			position: relative;
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 14px;
+			color: var(--text-color, #B3DBF2);
+			cursor: pointer;
+			user-select: none;
+			text-decoration: none;
+			transition: opacity 0.15s ease;
+		}
 
+		.card-field::after {
+			content: "🗐";
+			font-size: 13px;
+			opacity: 0.5;
+			transition: opacity 0.15s ease;
+		}
+
+		.card-field:hover {
+			opacity: 0.85;
+		}
+
+		.card-field:hover::after {
+			opacity: 0.8;
+		}
+
+		.card-field:focus {
+			outline: none;
+			text-decoration: underline;   /* акцент для клавиатурного фокуса */
+		}
 
 		/* === Мобильная адаптация === */
-		@media (max-width: 768px) {
+		@media (max-width: 767px) {
 			body {
 				padding: 10px;
 			}
@@ -498,21 +515,26 @@
 
 			.icon-buttons {
 				order: 2;
-				justify-content: center;
+				display: flex;
+				flex-wrap: nowrap;
 				overflow-x: auto;
-				padding-bottom: 5px;
 				-webkit-overflow-scrolling: touch;
 				scrollbar-width: none;
+				justify-content: center;
+				padding-bottom: 5px;
+				width: 100%;
+				gap: 3px;
 			}
 
 			.icon-buttons::-webkit-scrollbar {
 				display: none;
 			}
-
-			.table-header-row {
-				grid-template-columns: minmax(120px, 1fr) minmax(120px, 1fr) 80px 100px;
-			}
 			
+			.icon-button {
+				flex: 0 1 auto;
+				min-width: 30px;
+			}			
+		
 			td:nth-child(1) { width: 40%; }
 			td:nth-child(2) { width: 40%; }
 			td:nth-child(3) { 
@@ -530,6 +552,10 @@
 			td {
 				padding: 10px 6px;
 				font-size: 14px;
+			}
+			
+			.table-header-row {
+				grid-template-columns: 40% 40% 0 20%;
 			}
 			
 			.request-button {
@@ -596,7 +622,7 @@
 
 			.items-per-page select {
 				font-size: 14px;
-				padding: 6px 8px;
+				padding: 2px 8px;
 			}
 
 			.page-controls {
@@ -616,19 +642,15 @@
 
 			.modal-content {
 				margin: 20px;
-				padding: 15px;
+				padding: 20px;
 			}
 
 			.modal-buttons {
 				flex-direction: column;
-			}
+			}			
 		}
 
 		@media (max-width: 480px) {
-			
-			.table-header-row {
-				grid-template-columns: minmax(100px, 1fr) minmax(100px, 1fr) 60px 80px;
-			}
 			
 			td:nth-child(1) { width: 40%; }
 			td:nth-child(2) { width: 40%; }
@@ -731,7 +753,8 @@
 				<a href="https://new.donatepay.ru/@vanillabun" target="_blank" class="donate-link">https://new.donatepay.ru/@vanillabun</a>
 			</div>
 			<div class="modal-donation">
-				поддержка на карту Ы-Банк:<br>0000 0000 0000 0000 (Имя Ф.)
+				поддержка на карту Ы-Банк:<br>
+				<span id="cardNumber" class="card-field">(загрузка...)</span>
 			</div>
 			<div class="modal-buttons">
 				<button id="copyButton">Копировать название песни</button>
@@ -822,7 +845,7 @@
 		copyButton.addEventListener('click', () => {
 			const text = modalText.textContent;
 			navigator.clipboard.writeText(text).then(() => {
-				showToast("Скопировано!");
+				showToast("Скопировано");
 			});
 		});
 
@@ -834,6 +857,34 @@
 
 		window.addEventListener('click', (e) => {
 			if (e.target === modal) closeModal();
+		});
+		
+		const cardNumberEl = document.getElementById('cardNumber');
+
+		const encodedCard = "MDAwMCAxMTExIDIyMjIgMzMzMw=="; // "0000 1111 2222 3333"
+		const cardNumber = atob(encodedCard);
+
+		cardNumberEl.textContent = `${cardNumber} (Имя Ф.)`;
+
+		cardNumberEl.setAttribute('role', 'button');
+		cardNumberEl.setAttribute('tabindex', '0');
+		cardNumberEl.setAttribute('aria-label', 'Номер карты. Нажмите, чтобы скопировать');
+		cardNumberEl.title = 'Нажмите, чтобы скопировать номер карты';
+
+		cardNumberEl.addEventListener('click', () => {
+			navigator.clipboard.writeText(cardNumber).then(() => {
+				showToast("Номер карты скопирован");
+				cardNumberEl.blur();
+			}).catch(() => {
+				showToast("Не удалось скопировать — выделите вручную");
+			});
+		});
+
+		cardNumberEl.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+				e.preventDefault();
+				cardNumberEl.click();
+			}
 		});
 
 		// === Рендеринг таблицы ===
